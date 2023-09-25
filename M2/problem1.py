@@ -8,7 +8,7 @@ def process_array(num, arr):
     print("\nProcessing Array({}): \n\n".format(num))
     print(arr)
     print("\nOdds output:\n")
-    #rv437
+    #rv437 - 09/25/2023 -The code defines four arrays: a1, a2, a3, and a4. It also has a function process_array that shows the array and prints its odd numbers when called.
     # TODO add necessary print statement to output only the odd values (hint, best if shown as a single line)
     Odd=[num for num in arr if num%2!=0]
     print(Odd)

@@ -7,11 +7,9 @@ def process_array(num, arr):
     print("\nProcessing Array({}): \n\n".format(num))
     print(arr)
     total = 0.00
-    #rv437
+    #rv437 - 09/25/2023 - it takes a number and an array as input, prints the array, and then calculates and prints the total sum of the numbers in the array, rounded to two decimal places.
     # TODO add necessary code here for sum; every number must have two decimal places shown
-    for i in arr:
-        total = total +i;
-        total= float(round(total,2))
+    total="{:.2f}".format(sum(arr))
     print("\nThe total is {}:\n".format(total))
 
 print("Problem 2")
