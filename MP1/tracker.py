@@ -1,4 +1,3 @@
-
 from datetime import datetime
 import json
 import os
@@ -53,41 +52,68 @@ def list_tasks(_tasks):
 # edits should happen below this line
 
 def add_task(name: str, description: str, due: str):
-    """ Copies the TASK_TEMPLATE and fills in the passed in data then adds the task to the tasks list """
-    task = TASK_TEMPLATE.copy() # don't delete this; use this task reference for the below requirements
-    # update lastActivity with the current datetime value
-    # set the name, description, and due date (all must be provided)
-    # due date must match one of the formats mentioned in str_to_datetime()
-    # add the new task to the tasks list
-    # output a message confirming the new task was added or if the addition was rejected due to missing data based on the prior checks
-    # make sure save() is still called last in this function
-    # include your ucid and date as a comment of when you implemented this, briefly summarize the solution
-    # make sure any checks/conditions clearly display an appropriate message of what failed
+    missing_fields = []
+    if not name:
+        missing_fields.append('name')
+    if not description:
+        missing_fields.append('description')
+    if not due:
+        missing_fields.append('due')
+
+    if missing_fields:
+        print(f"Error: The following required fields are missing: {', '.join(missing_fields)}")
+        return
+    
+    task = TASK_TEMPLATE.copy()
+    task['name'] = name
+    task['description'] = description
+    task['due'] = str_to_datetime(due)
+    task['lastActivity'] = datetime.now()
+    tasks.append(task)
+    print("Task added successfully.")
     save()
 
 def process_update(index):
     """ extracted the user input prompts to get task data then passes it to update_task() """
-    # get the task by index
-    # consider index out of bounds scenarios and include appropriate message(s) for invalid index
-    # show the existing value of each property where the TODOs are marked in the text of the inputs below (replace the TODO related text with the found tasks's data)
-    # include your ucid and date as a comment of when you implemented this, briefly summarize the solution
-    
-    name = input(f"What's the name of this task? (TODO name) \n").strip()
-    desc = input(f"What's a brief descriptions of this task? (TODO description) \n").strip()
-    due = input(f"When is this task due (format: m/d/y H:M:S) (TODO due) \n").strip()
-    update_task(index, name=name, description=desc, due=due)
+    #rv437 and 10/06/23 here we can select a task and update any field according to our reqiurements.
+    if 0 <= index < len(tasks):
+        task = tasks[index]
+       
 
-def update_task(index: int, name: str, description:str, due: str):
-    """ Updates the name, description , due date of a task found by index if an update to the property was provided """
-    # find the task by index
-    # consider index out of bounds scenarios and include appropriate message(s) for invalid index
-    # update incoming task data if it's provided (if it's not provided use the original task property value)
-    # update lastActivity with the current datetime value
-    # output that the task was updated if any items were changed, otherwise mention task was not updated
-    # make sure save() is still called last in this function
-    # include your ucid and date as a comment of when you implemented this, briefly summarize the solution
-    
-    save()
+        name = input(f"What's the name of this task?   ({task['name']}) \n").strip()
+        description = input(f"What's a brief descriptions of this task?  ({task['description']}) \n").strip()
+        due = input(f"When is this task due (format: m/d/y H:M:S)  ({task['due']}) \n").strip()
+
+        update_task(index, name=name if name else None, description=description if description else None, due=due if due else None)
+    else:
+        print("Invalid task index.")
+
+def update_task(index: int, name: str = None, description: str = None, due: str = None):
+    #rv437 and 10/08/23 Here we are updating the existing task 
+    global tasks  # Assuming tasks is a global variable that holds task information
+    if index < 0 or index >= len(tasks):
+        return "Invalid index. Task not updated."
+    task = tasks[index]
+    updated = False
+    if name is not None:
+        task['name'] = name
+        updated = True
+
+    if description is not None:
+        task['description'] = description
+        updated = True
+
+    if due is not None:
+        task['due'] = due
+        updated = True
+
+    if updated:
+        task['lastActivity'] = datetime.now()
+        save()  # Assuming there's a save() function to save the changes
+        print("Task updated successfully.")
+    else:
+        print("No updates provided. Task not updated.")
+
 
 def mark_done(index):
     """ Updates a single task, via index, to a done datetime"""
