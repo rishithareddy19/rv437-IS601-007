@@ -156,34 +156,52 @@ def delete_task(index):
         print("Invalid task index.")
         
 def get_incomplete_tasks():
-    """ prints a list of tasks that are not done """
-    # generate a list of tasks where the task is not done
-    # pass that list into list_tasks()
-    # include your ucid and date as a comment of when you implemented this, briefly summarize the solution
-    _tasks = [] # <-- this is a placeholder to populate based on the above requirements
-    list_tasks(_tasks)
+    #rv437 and 10/09/23 Prints a list of tasks that are not done.
+    incomplete_tasks = [task for task in tasks if not task.get('done', False)]
 
+    if incomplete_tasks:
+        print("Incomplete tasks:")
+        list_tasks(incomplete_tasks)
+    else:
+        print("No tasks pending.")
+    
 def get_overdue_tasks():
-    """ prints a list of tasks that are over due completion (not done and expired) """
-    # generate a list of tasks where the due date is older than "now" and that are not complete (i.e., not done)
-    # pass that list into list_tasks()
-    # include your ucid and date as a comment of when you implemented this, briefly summarize the solution
-    _tasks = [] # <-- this is a placeholder to populate based on the above requirements
-    list_tasks(_tasks)
+    #rv437 and 10/09/23 Prints a list of tasks that are overdue (not done and expired).
+    global tasks
+    
+    # Filter tasks based on due date
+    overdue_tasks = [task for task in tasks if not task['done'] and 
+                     str_to_datetime(task['due']) < datetime.now()]
+    
+    if overdue_tasks:
+        print("Overdue tasks:")
+        list_tasks(overdue_tasks)
+    else:
+        print("No tasks overdue.")
 
 def get_time_remaining(index):
-    """ outputs the number of days, hours, minutes, seconds a task has before it's overdue otherwise shows similar info for how far past due it is """
-    # get the task by index
-    # consider index out of bounds scenarios and include appropriate message(s) for invalid index
-    # get the days, hours, minutes, seconds between the due date and now
-    # display the remaining time via print in a clear format showing X days, X hours, X minutes, X seconds (time components must be clearly separated)
-    # example: 1 day, 0 hours, 0 minutes, 0 seconds remaining
-    # if the due date is in the past print out how many days, hours, minutes, seconds the task is overdue (clearly note that it's overdue, values should be positive)
-    # example: 0 days, 2 hours, 5 minutes, 10 seconds overdue (note there's no negative values)
-    # include your ucid and date as a comment of when you implemented this, briefly summarize the solution
-    task = {}# <-- this is a placeholder to populate based on the above requirements
-    # do your print logic here
+    #rv437 and 10/09/23 Outputs the number of days, hours, minutes, seconds a task has before it's overdue or how far past due it is 
+    if 0 <= index < len(tasks):
+        task = tasks[index]
+        now = datetime.now()
 
+        if task.get('due'):
+            # Convert 'due' from string to datetime object for comparison
+            due_date = str_to_datetime(task['due'])
+
+            if due_date > now:
+                remaining_time = due_date - now
+                print("Time remaining for the task:")
+                print(f"{remaining_time.days} days, {remaining_time.seconds // 3600} hours, {(remaining_time.seconds // 60) % 60} minutes, {remaining_time.seconds % 60} seconds")
+            else:
+                overdue_time = now - due_date
+                print("Task is overdue by:")
+                print(f"{overdue_time.days} days, {overdue_time.seconds // 3600} hours, {(overdue_time.seconds // 60) % 60} minutes, {overdue_time.seconds % 60} seconds")
+        else:
+            print("Task doesn't have a due date.")
+    else:
+        print("Invalid task index.")
+        
 # no changes needed below this line
 
 command_list = ["add", "view", "update", "list", "incomplete", "overdue", "delete", "remaining", "help", "quit", "exit", "done"]
