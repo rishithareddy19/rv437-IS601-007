@@ -41,7 +41,7 @@ def load():
     print(f"data {data}")    
 
 def list_tasks(_tasks):
-    """ List a summary view of all tasks """
+    #rv437 and 10/09/23 List a summary view of all tasks 
     i = 0
     for t in _tasks:
         print(f"{i+1}) [{'x' if t['done'] else ' '}] Task: {t['name']} (Due: {t['due']})")
@@ -52,6 +52,7 @@ def list_tasks(_tasks):
 # edits should happen below this line
 
 def add_task(name: str, description: str, due: str):
+    #rv437 and 10/09/23 here we are adding tasks to the tracker app
     missing_fields = []
     if not name:
         missing_fields.append('name')
@@ -116,42 +117,44 @@ def update_task(index: int, name: str = None, description: str = None, due: str 
 
 
 def mark_done(index):
-    """ Updates a single task, via index, to a done datetime"""
-    # find task from list by index
-    # consider index out of bounds scenarios and include appropriate message(s) for invalid index
-    # if it's not currently marked as done, record the current datetime as the value (don't just set it as true)
-    # if it is currently done, print a message saying it's already been completed
-    # make sure save() is still called last in this function
-    # include your ucid and date as a comment of when you implemented this, briefly summarize the solution
-
-    save()
+    #rv437 and 10/09/23 this helps to mark a task as done
+    if 0 <= index < len(tasks):
+        task = tasks[index]
+        if not task.get('done'):
+            task['done'] = datetime.now()
+            print("Task marked as done.")
+        else:
+            print("Task is already completed.")
+        save()
+    else:
+        print("Invalid task index.")
 
 def view_task(index):
-    """ View more info about a specific task fetch by index """
-    # find task from list by index
-    # consider index out of bounds scenarios and include appropriate message(s) for invalid index
-    # utilize the given print statement when a task is found
-    # include your ucid and date as a comment of when you implemented this, briefly summarize the solution
-    task = {} # <-- replace or update the assignment of this variable, I just used an empty dict so it would run without changes
-    print(f"""
-        [{'x' if task['done'] else ' '}] Task: {task['name']}\n 
-        Description: {task['description']} \n 
-        Last Activity: {task['lastActivity']} \n
-        Due: {task['due']}\n
-        Completed: {task['done'] if task['done'] else '-'} \n
-        """.replace('  ', ' '))
+    #rv437 and 10/09/23 Here we can use this function to view specific task 
+    if 0 <= index < len(tasks):
+        task = tasks[index]
+        done_status = task.get('done', False)
+        due_date = task.get('due', 'Not specified')
+        print(f"""
+            [{'x' if done_status else ' '}] Task: {task['name']}
+            Description: {task['description']}
+            Last Activity: {task['lastActivity']}
+            Due: {due_date}
+            Completed: {task['done'] if task.get('done') else '-'}
+            """.replace('  ', ' '))
+    else:
+        print("Invalid task index.")
 
-
+        
 def delete_task(index):
-    """ deletes a task from the tasks list by index """
-    # delete/remove task from list by index
-    # message should show if it was successful or not
-    # consider index out of bounds scenarios and include appropriate message(s) for invalid index
-    # make sure save() is still called last in this function
-    # include your ucid and date as a comment of when you implemented this, briefly summarize the solution
-    
-    save()
-
+    #rv437 and 10/09/23 here we use this to delete a task 
+    if 0 <= index < len(tasks):
+        del tasks[index]
+        print("Task deleted successfully.")
+        save()
+    else:
+        print("Invalid task index.")
+        
 def get_incomplete_tasks():
     """ prints a list of tasks that are not done """
     # generate a list of tasks where the task is not done
