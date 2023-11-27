@@ -4,36 +4,52 @@
 {% from "organization_dropdown.html" import organization_dropdown %}
 {% from "sort_filter.html" import sort_filter %}
 <div class="container-fluid">
-    <div class="h1 text-center">{{organization_name}}
-        Donations</div>
+    <div class="h1 text-center">{{organization_name}} Donations</div>
     <form method="GET">
         <div class="row">
-            {# TODO
-            build a horizontal filter/sort form with
-            first_name (show as first name, but name should be fn)
-            last_name (show as last name, but name should be ln)
-            email (validate as text, not email, so partial match works)
-            organization (provided) (name is organization value is the id)
-            sort/order (using allowed_columns and provided partial template)
-            limit (default 10)
-            ensure all fields prefill with request arg data if provided
-            #}
-            <!--first name-->
-
-            <!--last name-->
-
-            <!--email-->
-
-            <!--organization-->
+            <!-- Donor First Name -->
             <div class="col">
-                <label class="visually-hidden"
-                    for="organization">Organization</label>
-                {{organization_dropdown(request.args.get("organization"))}}
+                <label class="visually-hidden" for="donor_firstname">Donor First Name</label>
+                <input type="text" class="form-control" id="donor_firstname" name="donor_firstname"
+                       value="{{ request.args.get('donor_firstname') }}" placeholder="First Name">
             </div>
-            <!-- sort filter -->
-            {# TODO pass/set the columns that can be used for sort/filter (i.e. allowed_columns) #}
-            {{sort_filter(cols=[])}}
-            <!--limit filter-->
+
+            <!-- Donor Last Name -->
+            <div class="col">
+                <label class="visually-hidden" for="donor_lastname">Donor Last Name</label>
+                <input type="text" class="form-control" id="donor_lastname" name="donor_lastname"
+                       value="{{ request.args.get('donor_lastname') }}" placeholder="Last Name">
+            </div>
+
+            <!-- Donor Email -->
+            <div class="col">
+                <label class="visually-hidden" for="donor_email">Donor Email</label>
+                <input type="text" class="form-control" id="donor_email" name="donor_email"
+                       value="{{ request.args.get('donor_email') }}" placeholder="Email">
+            </div>
+
+            <!-- Item Name -->
+            <div class="col">
+                <label class="visually-hidden" for="item_name">Item Name</label>
+                <input type="text" class="form-control" id="item_name" name="item_name"
+                       value="{{ request.args.get('item_name') }}" placeholder="Item Name">
+            </div>
+
+            <!-- Organization Dropdown -->
+            <div class="col">
+                <label class="visually-hidden" for="organization">Organization</label>
+                {{ organization_dropdown(request.args.get("organization")) }}
+            </div>
+
+            <!-- Sort Filter -->
+            {{ sort_filter(cols=allowed_columns) }}
+
+            <!-- Limit Filter -->
+            <div class="col">
+                <label class="visually-hidden" for="limit">Limit</label>
+                <input type="number" class="form-control" id="limit" name="limit"
+                       value="{{ request.args.get('limit', 10) }}" placeholder="Limit">
+            </div>
 
             <div class="col">
                 <input type="submit" class="btn btn-primary" value="Filter" />
@@ -47,29 +63,34 @@
         {% if rows and rows|length > 0 %}
         <thead>
             <tr class="text-capitalize">
-                {# generate th tags for each column to display #}
-                {# don't show any id or organization_id columns #}
-                {# IMPORTANT use table column names as the headings, replace _ with space via filter #}
-                <!-- add th elements -->
-
-                <!-- keep this -->
+                {% for col in allowed_columns %}
+                    {% if col not in ['id', 'organization_id'] %}
+                        <th>{{ col|replace("_", " ") }}</th>
+                    {% endif %}
+                {% endfor %}
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            {# generate tr with td tags for each piece of data #}
-            {# don't show any id or organization_id columns #}
-            {# in the last column add the following
-            an edit button that passes the donation id to donation edit
-            a delete button that passes the donation id and the request args to the donation delete route
-            #}
-            <!-- iterate over rows and generate proper tr and td elements with the data -->
-
+            {% for row in rows %}
+                <tr>
+                    {% for col in allowed_columns %}
+                        {% if col not in ['id', 'organization_id'] %}
+                            <td>{{ row[col] }}</td>
+                        {% endif %}
+                    {% endfor %}
+                    <td>
+                        <a href="{{ url_for('donations.edit', id=row['id']) }}" class="btn btn-primary">Edit</a>
+                        <a href="{{ url_for('donations.delete', id=row['id'], **request.args) }}"
+                           class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
         </tbody>
         {% else %}
         <tbody>
             <tr>
-                <td colspan="100%">No results to show</td>
+                <td colspan="{{ allowed_columns|length + 1 }}">No results to show</td>
             </tr>
         </tbody>
         {% endif %}

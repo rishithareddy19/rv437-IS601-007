@@ -7,22 +7,25 @@
     <div class="h1 text-center">Organization Directory</div>
     <form method="GET">
         <div class="row">
-            {# TODO
-            build a horizontal filter/sort form with
-            name (show as organization name but name field should be name)
-            country/state (provided)
-            sort/order (using allowed_columns and provided partial template)
-            limit (default 10)
-            ensure all fields prefill with request arg data if provided
-            #}
-            <!--name filter-->
+            <!-- Organization Name Filter -->
+            <div class="col">
+                <label class="visually-hidden" for="name">Organization Name</label>
+                <input type="text" class="form-control" id="name" name="name"
+                       value="{{ request.args.get('name') }}" placeholder="Organization Name">
+            </div>
 
-            <!-- country state filter-->
-            {{country_state_selector(layout="horizontal")}}
-            <!-- sort filter -->
-            {# TODO pass/set the columns that can be used for sort/filter (i.e. allowed_columns) #}
-            {{sort_filter(cols=[])}}
-            <!--limit filter-->
+            <!-- Country/State Filter -->
+            {{ country_state_selector(layout="horizontal") }}
+
+            <!-- Sort Filter -->
+            {{ sort_filter(cols=allowed_columns) }}
+
+            <!-- Limit Filter -->
+            <div class="col">
+                <label class="visually-hidden" for="limit">Limit</label>
+                <input type="number" class="form-control" id="limit" name="limit"
+                       value="{{ request.args.get('limit', 10) }}" placeholder="Limit">
+            </div>
 
             <div class="col">
                 <input type="submit" class="btn btn-primary" value="Filter" />
@@ -37,33 +40,41 @@
             {% if rows and rows|length > 0 %}
             <thead>
                 <tr class="text-capitalize">
-                    {# generate th tags for each column to display #}
-                    {# don't show any id or organization_id columns #}
-                    {# IMPORTANT use table column names as the headings, replace _ with space via filter #}
-                    <!-- add th elements -->
-
-                    <!-- keep this -->
+                    {% for col in allowed_columns %}
+                        {% if col not in ['id', 'organization_id'] %}
+                            <th>{{ col|replace("_", " ") }}</th>
+                        {% endif %}
+                    {% endfor %}
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                {# generate tr with td tags for each piece of data #}
-                {# don't show any id or organization_id columns #}
-                {# if the td is for website, display it as a link where the text is "website" and the url is the
-                website url #}
-                {# in the last column add the following
-                a view button that passes the organization id to donation search (this will be an organization's donation
-                list)
-                an edit button that passes the organization id to organization edit
-                a delete button that passes the organization id and the request args to the organization delete route
-                #}
-                <!-- iterate over rows and generate proper tr and td elements with the data -->
-
+                {% for row in rows %}
+                    <tr>
+                        {% for col in allowed_columns %}
+                            {% if col not in ['id', 'organization_id'] %}
+                                {% if col == 'website' %}
+                                    <td><a href="{{ row[col] }}" target="_blank">Website</a></td>
+                                {% else %}
+                                    <td>{{ row[col] }}</td>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        <td>
+                            <a href="{{ url_for('donations.search', organization_id=row['id']) }}"
+                               class="btn btn-primary">View Donations</a>
+                            <a href="{{ url_for('organizations.edit', id=row['id']) }}"
+                               class="btn btn-primary">Edit</a>
+                            <a href="{{ url_for('organizations.delete', id=row['id'], **request.args) }}"
+                               class="btn btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
             </tbody>
             {% else %}
             <tbody>
                 <tr>
-                    <td colspan="100%">No results to show</td>
+                    <td colspan="{{ allowed_columns|length + 1 }}">No results to show</td>
                 </tr>
             </tbody>
             {% endif %}
