@@ -12,14 +12,14 @@ def search():
     query = """
     SELECT d.id, d.donor_firstname, d.donor_lastname, d.donor_email, d.organization_id, 
            d.item_name, d.item_description, d.item_quantity, d.donation_date, d.comments, 
-           o.organization_name
-    FROM donations d
-    LEFT JOIN organizations o ON d.organization_id = o.id
+           o.name as organization_name
+    FROM IS601_MP3_Donations d
+    LEFT JOIN IS601_MP3_Organizations o ON d.organization_id = o.id
     WHERE 1=1
     """
     args = {}
 
-    allowed_columns = ["donor_firstname", "donor_lastname", "donor_email", "organization_name", "item_name", "item_quantity", "created", "modified"]
+    allowed_columns = ["donor_firstname", "donor_lastname", "donor_email", "organization_name", "item_name", "item_description","item_quantity", "donation_date", "comments"]
 
     # search-2 to search-10
     fn = request.args.get("donor_firstname")

@@ -7,28 +7,56 @@ organization = Blueprint('organization', __name__, url_prefix='/organization')
 @organization.route("/search", methods=["GET"])
 def search():
     rows = []
-    allowed_columns = ["name", "city", "country", "state", "modified", "created"]
-    query = "SELECT id, name, address, city, country, state, zip, website, (SELECT COUNT(*) FROM IS601_MP3_Donations WHERE organization_id = IS601_MP3_Organizations.id) as donations FROM IS601_MP3_Organizations WHERE 1=1"
+    allowed_columns = ["name", "address", "website","city", "country", "state", "zip"]
+    query = "SELECT DISTINCT id, name, address, city, country, state, zip, website, (SELECT COUNT(*) FROM IS601_MP3_Donations  WHERE organization_id = IS601_MP3_Organizations.id) as donations FROM IS601_MP3_Organizations WHERE 1=1"
     args = {}
-
+    
+    name = request.args.get("name")
+    country = request.args.get("country")
+    state = request.args.get("state")
+    column = request.args.get("column")
+    order = request.args.get("order")
     limit = request.args.get("limit", 10)
+    # TODO search-3 append a LIKE filter for name if provided
+    if name:
+        query += " AND name LIKE %(name)s"
+        args["name"] = f"%{name}%"
+
+    # TODO search-4 append an equality filter for country if provided
+    if country:
+        query += " AND country = %(country)s"
+        args["country"] = country
+
+    # TODO search-5 append an equality filter for state if provided
+    if state:
+        query += " AND state = %(state)s"
+        args["state"] = state
+
+    # TODO search-6 append sorting if column and order are provided and within the allows columns and allowed order asc,desc
+    if column in allowed_columns and order in ["asc", "desc"]:
+        query += f" ORDER BY {column} {order}"
+
+    # TODO search-7 append limit (default 10) or limit greater than or equal to 1 and less than or equal to 100
     try:
-        limit = int(limit)
-        if limit < 1 or limit > 100:
+        limit = int(request.args.get("limit", 10))
+        if 1 <= limit <= 100:
+            query += " LIMIT %(limit)s"
+            args["limit"] = limit
+        else:
             raise ValueError("Limit must be between 1 and 100.")
     except ValueError:
         flash("Invalid limit value.", "danger")
         return redirect(url_for("organization.search"))
 
-    query += " LIMIT %(limit)s"
-    args["limit"] = limit
-
     try:
         result = DB.selectAll(query, args)
         if result.status:
+            print(result.rows)
             rows = result.rows
     except Exception as e:
         flash(str(e), "danger")
+    
+    allowed_columns = [(column, column.replace("_", " ").title()) for column in allowed_columns]
 
     return render_template("list_organizations.html", rows=rows, allowed_columns=allowed_columns)
 
@@ -150,6 +178,10 @@ def edit():
 
         if not has_error:
             try:
+                # TODO: Add logic to delete all donations related to this organization first due to foreign key constraints
+                DB.delete("DELETE FROM IS601_MP3_Donations WHERE organization_id=%(id)s", {"id": id})
+
+                # Then, update the organization
                 result = DB.update("""
                 UPDATE IS601_MP3_Organizations
                 SET name=%(name)s, address=%(address)s, city=%(city)s, state=%(state)s,
@@ -177,6 +209,9 @@ def edit():
 
         if result.status:
             row = result.row
+    except ValueError as ve:
+    # Handle the specific ValueError here
+        flash(str(ve), "danger")
     except Exception as e:
         flash(str(e), "danger")
 
@@ -192,6 +227,8 @@ def delete():
 
     try:
         # TODO: Add logic to delete all donations related to this organization first due to foreign key constraints
+        DB.delete("DELETE FROM IS601_MP3_Donations WHERE organization_id=%(id)s", {"id": id})
+
         # Then, delete the organization
         result = DB.delete("DELETE FROM IS601_MP3_Organizations WHERE id=%(id)s", {"id": id})
 

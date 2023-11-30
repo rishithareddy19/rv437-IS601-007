@@ -11,38 +11,57 @@
             <div class="col">
                 <label class="visually-hidden" for="donor_firstname">Donor First Name</label>
                 <input type="text" class="form-control" id="donor_firstname" name="donor_firstname"
-                       value="{{ request.args.get('donor_firstname') }}" placeholder="First Name">
+                       value="{{ request.args.get('donor_firstname') or '' }}" placeholder="First Name">
             </div>
 
             <!-- Donor Last Name -->
             <div class="col">
                 <label class="visually-hidden" for="donor_lastname">Donor Last Name</label>
                 <input type="text" class="form-control" id="donor_lastname" name="donor_lastname"
-                       value="{{ request.args.get('donor_lastname') }}" placeholder="Last Name">
+                       value="{{ request.args.get('donor_lastname') or ''}}" placeholder="Last Name">
             </div>
 
             <!-- Donor Email -->
             <div class="col">
                 <label class="visually-hidden" for="donor_email">Donor Email</label>
                 <input type="text" class="form-control" id="donor_email" name="donor_email"
-                       value="{{ request.args.get('donor_email') }}" placeholder="Email">
+                       value="{{ request.args.get('donor_email') or ''}}" placeholder="Email">
             </div>
 
             <!-- Item Name -->
             <div class="col">
                 <label class="visually-hidden" for="item_name">Item Name</label>
                 <input type="text" class="form-control" id="item_name" name="item_name"
-                       value="{{ request.args.get('item_name') }}" placeholder="Item Name">
+                       value="{{ request.args.get('item_name') or '' }}" placeholder="Item Name">
             </div>
 
             <!-- Organization Dropdown -->
             <div class="col">
                 <label class="visually-hidden" for="organization">Organization</label>
-                {{ organization_dropdown(request.args.get("organization")) }}
+                {{ organization_dropdown(request.args.get("organization")) or '' }}
             </div>
 
             <!-- Sort Filter -->
-            {{ sort_filter(cols=allowed_columns) }}
+            {% macro sort_filter(cols) %}
+            <div class="col">
+                <label class="visually-hidden" for="sort">Sort By</label>
+                <select class="form-select" id="sort" name="column">
+                    {% for col in cols %}
+                        {% if col not in ['id', 'organization_id'] %}
+                            <option value="{{ col }}">{{ col|replace("_", " ") }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col">
+                <label class="visually-hidden" for="order">Sort Order</label>
+                <select class="form-select" id="order" name="order">
+                    <option value="asc">Ascending</option>
+                    <option value="desc">Descending</option>
+                </select>
+            </div>
+        {% endmacro %}
+        
 
             <!-- Limit Filter -->
             <div class="col">
