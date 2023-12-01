@@ -23,6 +23,7 @@ Donation{% endblock %}
             #}
             
             <!--donor first name-->
+            {#rv437-29/11/23#}
             <div class="mb-3">
                 <label for="donor_firstname" class="form-label">Donor First Name</label>
                 <input type="text" class="form-control" id="donor_firstname" name="donor_firstname"
@@ -77,7 +78,7 @@ Donation{% endblock %}
                        value="{{ donation.get('comments') or ''}}" required>
             </div>
             <!-- organization selection-->
-           
+           {#rv437-29/11/23#}
             <div class="mb-3">
                 <label for="organization_id" class="form-label">Organization</label>
             {{ organization_dropdown(val=donation.get("organization_id")) }}

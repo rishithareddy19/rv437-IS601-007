@@ -7,7 +7,21 @@
     <div class="h1 text-center">{{organization_name}} Donations</div>
     <form method="GET">
         <div class="row">
+            {# TODO
+                build a horizontal filter/sort form with
+                donor first name (show as first name, but name should be fn)
+                donor last_name (show as last name, but name should be ln)
+                donor email (validate as text, not email, so partial match works)
+                item name
+                organization (provided) (name is organization value is the id)
+                sort/order (using allowed_columns and provided partial template)
+                limit (default 10)
+                ensure all fields prefill with request arg data if provided
+                #}
+    
+                {#rv437-29/11/23#}
             <!-- Donor First Name -->
+            {#rv437-29/11/23#}
             <div class="col">
                 <label class="visually-hidden" for="donor_firstname">Donor First Name</label>
                 <input type="text" class="form-control" id="donor_firstname" name="donor_firstname"
@@ -15,6 +29,7 @@
             </div>
 
             <!-- Donor Last Name -->
+            {#rv437-29/11/23#}
             <div class="col">
                 <label class="visually-hidden" for="donor_lastname">Donor Last Name</label>
                 <input type="text" class="form-control" id="donor_lastname" name="donor_lastname"
@@ -22,6 +37,7 @@
             </div>
 
             <!-- Donor Email -->
+            {#rv437-29/11/23#}
             <div class="col">
                 <label class="visually-hidden" for="donor_email">Donor Email</label>
                 <input type="text" class="form-control" id="donor_email" name="donor_email"
@@ -29,6 +45,7 @@
             </div>
 
             <!-- Item Name -->
+            {#rv437-29/11/23#}
             <div class="col">
                 <label class="visually-hidden" for="item_name">Item Name</label>
                 <input type="text" class="form-control" id="item_name" name="item_name"
@@ -36,10 +53,13 @@
             </div>
 
             <!-- Organization Dropdown -->
+            {#rv437-29/11/23#}
             <div class="col">
                 <label class="visually-hidden" for="organization">Organization</label>
                 {{ organization_dropdown(request.args.get("organization")) or '' }}
             </div>
+            {# TODO pass/set the columns that can be used for sort/filter (i.e. allowed_columns) #}
+            {#rv437-29/11/23#}
 
             <!-- Sort Filter -->
             {% macro sort_filter(cols) %}
@@ -82,6 +102,10 @@
         {% if rows and rows|length > 0 %}
         <thead>
             <tr class="text-capitalize">
+                {# generate th tags for each column to display #}
+                {# don't show any id or organization_id columns #}
+                {# IMPORTANT use table column names as the headings, replace _ with space via filter #}
+                {#rv437-29/11/23#}
                 {% for col in allowed_columns %}
                     {% if col not in ['id', 'organization_id'] %}
                         <th>{{ col|replace("_", " ") }}</th>
@@ -91,6 +115,10 @@
             </tr>
         </thead>
         <tbody>
+            {# generate tr with td tags for each piece of data #}
+            {# don't show any id or organization_id columns #}
+            {#rv437-29/11/23#}
+            
             {% for row in rows %}
                 <tr>
                     {% for col in allowed_columns %}
