@@ -18,6 +18,7 @@ def importCSV():
             return redirect(request.url)
         
         # TODO importcsv-1: Check that it's a .csv file, return a proper flash message if it's not
+        #rv437-29/11/23
         if file and secure_filename(file.filename):
             file_name = secure_filename(file.filename)
             if file_name.endswith('.csv'):
@@ -60,11 +61,13 @@ def importCSV():
                     stream = io.TextIOWrapper(file.stream._file, "UTF8", newline=None)
                     
                     # TODO importcsv-2: Read the csv file stream as a dictionary
+                     #rv437-29/11/23
                     csv_reader = csv.DictReader(stream)
                     
                     for row in csv_reader:
                         # TODO importcsv-3: Extract organization data and append to the organization list
                         # as a dictionary only with organization data if all organization fields are present
+                         #rv437-29/11/23
                         if all(key in row for key in ['organization_name', 'organization_address', 'organization_city', 'organization_country', 'organization_state', 'organization_zip,', 'organization_website', 'organization_description']):
                             organizations.append({
                                 'name': row['organization_name'],
@@ -79,6 +82,7 @@ def importCSV():
 
                         # TODO importcsv-4: Extract donation data and append to the donation list
                         # as a dictionary only with donation data if all donation fields are present
+                         #rv437-29/11/23
                         if all(key in row for key in ['donor_firstname', 'donor_lastname', 'donor_email', 'item_name', 'item_description', 'quantity', 'organization_name', 'donation_date', 'comments']):
                             donations.append({
                                 'donor_firstname': row['donor_name'].split()[0] if row["donor_name"] else '',
@@ -97,12 +101,14 @@ def importCSV():
                         try:
                             result = DB.insertMany(organization_query, organizations)
                             # TODO importcsv-5: Display a flash message about the number of organizations inserted
+                             #rv437-29/11/23
                             flash(f"{len(organizations)} organizations inserted or updated", "success")
                         except Exception as e:
                             traceback.print_exc()
                             flash("There was an error loading in the CSV data for organizations", "danger")
                     else:
                         # TODO importcsv-6: Display a flash message (info) that no organizations were loaded
+                         #rv437-29/11/23
                         flash("No organizations to import", "info")
 
                     if len(donations) > 0:
@@ -110,12 +116,14 @@ def importCSV():
                         try:
                             result = DB.insertMany(donation_query, donations)
                             # TODO importcsv-7: Display a flash message about the number of donations loaded
+                             #rv437-29/11/23
                             flash(f"{len(donations)} donations inserted or updated", "success")
                         except Exception as e:
                             traceback.print_exc()
                             flash("There was an error loading in the CSV data for donations", "danger")
                     else:
                         # TODO importcsv-8: Display a flash message (info) that no donations were loaded
+                         #rv437-29/11/23
                         flash("No donations to import", "info")
 
                     try:

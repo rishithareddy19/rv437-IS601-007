@@ -214,7 +214,7 @@ def edit():
             try:
                 # edit-12: fill in proper update query
                 result = DB.update("""
-                UPDATE donations SET
+                UPDATE IS601_MP3_Donations SET
                 donor_firstname = %(donor_firstname)s,
                 donor_lastname = %(donor_lastname)s,
                 donor_email = %(donor_email)s,
@@ -237,7 +237,7 @@ def edit():
         result = DB.selectOne("""
         SELECT id, donor_firstname, donor_lastname, donor_email, organization_id, 
                item_name, item_description, item_quantity, donation_date, comments
-        FROM donations
+        FROM IS601_MP3_Donations
         WHERE id = %s
         """, id)
 
