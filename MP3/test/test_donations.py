@@ -45,7 +45,7 @@ def rand_org():
 
 fake_id_2 = 0
 @pytest.fixture(scope='module')
-def off_fake_donation_2(client, rand_org):
+def fake_donation_2(client, rand_org):
     DB.getDB().autocommit = True
     result = DB.insertOne("""INSERT INTO IS601_MP3_Donations (
                  donor_firstname,
@@ -71,7 +71,7 @@ def off_fake_donation_2(client, rand_org):
 
     return soup
     
-def off_test_donation_form(fake_donation_2):
+def test_donation_form(fake_donation_2):
     test_list = ["donor_firstname", "donor_lastname", "donor_email", "organization_id", "item_name", "item_quantity", "item_description","donation_date"]
     form = fake_donation_2
     assert form, "Failed to load form"
@@ -81,7 +81,7 @@ def off_test_donation_form(fake_donation_2):
         assert ele.get("id"), f"Input element {i} is missing id"
         assert label, f"Input element {i} is missing label or proper 'for' attribute"
 
-def off_test_donation_edit(fake_donation_2, rand_org, client):
+def test_donation_edit(fake_donation_2, rand_org, client):
     test_dict = {
         "donor_firstname":"delme3",
         "donor_lastname":"delme3",
@@ -106,7 +106,7 @@ def off_test_donation_edit(fake_donation_2, rand_org, client):
         assert check == v, f"Failed to populate correct {k}"
     
     
-def off_test_donation_add(client, rand_org):
+def test_donation_add(client, rand_org):
     id = rand_org
     # Get the current date and time
     now = datetime.datetime.now()
@@ -135,7 +135,7 @@ def off_test_donation_add(client, rand_org):
     else:
         assert False, "Test donation didn't persist to database"
 
-def off_test_donation_delete(client, rand_org):
+def test_donation_delete(client, rand_org):
     result = DB.insertOne("""INSERT INTO IS601_MP3_Donations (
                  donor_firstname,
                  donor_lastname,
@@ -164,7 +164,7 @@ def off_test_donation_delete(client, rand_org):
     "allowed_column", 
     ["donor_firstname", "donor_lastname", "donor_email", "organization_name", "item_name", "item_quantity", "created", "modified"]
 )
-def off_test_donation_list(allowed_column, fake_donation_2,client):
+def test_donation_list(allowed_column, fake_donation_2,client):
     cols = ["donor_firstname",
                  "donor_lastname",
                  "donor_email",
@@ -205,7 +205,7 @@ def off_test_donation_list(allowed_column, fake_donation_2,client):
         i = thead_names.index(k.replace("_"," ").lower())
         assert str(v if v is not None else "none").lower() in tr_values[i], f"Expected value {v} in table cell in column [{i}] {tr_values[i]}"
     
-def off_test_donation_search_form(client):
+def test_donation_search_form(client):
     resp = client.get("/donations/search")
     soup = BeautifulSoup(resp.data, "html.parser")
     form = soup.form

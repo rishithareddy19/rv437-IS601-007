@@ -58,7 +58,7 @@ def fake_org_2(client):
 
     return soup
     
-def off_test_organization_form(fake_org_2):
+def test_organization_form(fake_org_2):
     test_list = ["name", "address", "city", "state", "country", "website", "zip","description"]
     form = fake_org_2
     assert form, "Failed to load form"
@@ -69,7 +69,7 @@ def off_test_organization_form(fake_org_2):
         assert ele.get("id"), f"Input element {i} is missing id"
         assert label, f"Input element {i} is missing label or proper 'for' attribute"
 
-def off_test_organization_edit(fake_org_2, client):
+def test_organization_edit(fake_org_2, client):
     test_dict = {
         "name":"tctest_delme2",
         "address":"fake2",
@@ -95,7 +95,7 @@ def off_test_organization_edit(fake_org_2, client):
         assert check == v, f"Failed to populate correct {k}"
     
     
-def off_test_organization_add(client):
+def test_organization_add(client):
     test_dict = {
         "name":"tctest_delme3",
         "address":"fake3",
@@ -118,7 +118,7 @@ def off_test_organization_add(client):
     else:
         assert False, "Test donation didn't persist to database"
 
-def off_test_organization_delete(client):
+def test_organization_delete(client):
     result = DB.insertOne("""INSERT INTO IS601_MP3_Organizations (
                  name,
                  address,
@@ -143,7 +143,7 @@ def off_test_organization_delete(client):
     "allowed_column", 
     ["name", "city", "country", "state", "modified", "created"]
 )
-def off_test_organization_list(allowed_column, fake_org_2,client):
+def test_organization_list(allowed_column, fake_org_2,client):
     cols = ["name",
                  "address",
                  "city",
@@ -155,7 +155,10 @@ def off_test_organization_list(allowed_column, fake_org_2,client):
     cols.remove("donations")
     ac = allowed_column
     print(f"Checking list sort on column {ac}")
-    resp = client.get(f"/organization/search?limit=3&column={ac}&order=asc")
+    order = "desc"
+    if allowed_column == "country":
+        order = "asc"
+    resp = client.get(f"/organization/search?limit=3&column={ac}&order={order}")
     soup = BeautifulSoup(resp.data, "html.parser")
     table = soup.select_one("table")
     
@@ -172,7 +175,7 @@ def off_test_organization_list(allowed_column, fake_org_2,client):
     tr = tbody.select_one("tr").select("td")
     
     tr_values = list(map(lambda x: x.text.strip().lower(), tr))
-    result = DB.selectAll(f"SELECT {','.join(cols)},(select count(1) FROM IS601_MP3_Donations where organization_id = id) as donations FROM IS601_MP3_Organizations WHERE 1=1 ORDER BY {ac} asc LIMIT 3")
+    result = DB.selectAll(f"SELECT {','.join(cols)},(select count(1) FROM IS601_MP3_Donations where organization_id = O.id) as donations FROM IS601_MP3_Organizations O WHERE 1=1 ORDER BY {ac} {order} LIMIT 3")
     assert result and result.rows and len(result.rows) > 0, "Organization lookup failed"
     vals = result.rows[0].items()
     #print(tbody_values)
@@ -181,7 +184,7 @@ def off_test_organization_list(allowed_column, fake_org_2,client):
         i = thead_names.index(k.replace("_"," ").lower())
         assert str(v if v is not None else "none").lower() in tr_values[i], f"Expected value {v} in table cell in column [{i}] {tr_values[i]}"
     
-def off_test_organization_search_form(client):
+def test_organization_search_form(client):
     resp = client.get("/organization/search")
     soup = BeautifulSoup(resp.data, "html.parser")
     form = soup.form
