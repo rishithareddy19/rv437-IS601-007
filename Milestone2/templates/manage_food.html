@@ -1,95 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if food %}Edit Food{% else %}Add Food{% endif %}</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+{% extends "layout.html" %}
+{% block title %}{{ "Edit" if food else "Add" }} Food{% endblock %}
+{% block content %}
+<div class="container-fluid mt-2">
+    <h1 class="text-center">{{ "Edit" if food else "Add" }} Food</h1>
+    <div class="container mt-2">
+        <form method="post" action="{% if food %}{{ url_for('food.edit', id=food.FoodID) }}{% else %}{{ url_for('food.add') }}{% endif %}">
+            <div class="mb-3">
+                <label for="label" class="form-label">Label</label>
+                <input type="text" class="form-control" id="label" name="label" value="{{ food.Label if food else '' }}" required>
+            </div>
 
-        form {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            width: 100%;
-        }
+            <div class="mb-3">
+                <label for="url" class="form-label">URL</label>
+                <input type="text" class="form-control" id="url" name="url" value="{{ food.Url if food else '' }}">
+            </div>
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
+            <div class="mb-3">
+                <label for="enerc_kcal" class="form-label">Energy (kcal)</label>
+                <input type="number" class="form-control" id="enerc_kcal" name="enerc_kcal" value="{{ food.Enerc_Kcal if food else '' }}" required>
+            </div>
 
-        input {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 16px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
+            <div class="mb-3">
+                <label for="protein" class="form-label">Protein</label>
+                <input type="number" class="form-control" id="protein" name="protein" value="{{ food.Protein if food else '' }}" required>
+            </div>
 
-        input[type="submit"] {
-            background-color: #4caf50;
-            color: #fff;
-            cursor: pointer;
-        }
+            <div class="mb-3">
+                <label for="fat" class="form-label">Fat</label>
+                <input type="number" class="form-control" id="fat" name="fat" value="{{ food.Fat if food else '' }}" required>
+            </div>
 
-        input[type="submit"]:hover {
-            background-color: #45a049;
-        }
+            <div class="mb-3">
+                <label for="carbohydrate" class="form-label">Carbohydrate</label>
+                <input type="number" class="form-control" id="carbohydrate" name="carbohydrate" value="{{ food.Carbohydrate if food else '' }}" required>
+            </div>
 
-        .confirmation-message {
-            color: #4caf50;
-            margin-top: 16px;
-        }
-    </style>
-</head>
-<body>
-    <form method="post" action="{% if food %}{{ url_for('food.edit', id=food.FoodID) }}{% else %}{{ url_for('food.add') }}{% endif %}">
-        <h1>{% if food %}Edit Food{% else %}Add Food{% endif %}</h1>
-        <label for="label">Label:</label>
-        <input type="text" id="label" name="label" value="{{ food.Label if food else '' }}" required>
+            <div class="mb-3">
+                <label for="fiber" class="form-label">Fiber</label>
+                <input type="number" class="form-control" id="fiber" name="fiber" value="{{ food.Fiber if food else '' }}" required>
+            </div>
 
-        <label for="url">URL:</label>
-        <input type="text" id="url" name="url" value="{{ food.Url if food else '' }}">
+            <div class="mb-3">
+                <label for="category" class="form-label">Category</label>
+                <input type="text" class="form-control" id="category" name="category" value="{{ food.Category if food else '' }}" required>
+            </div>
 
-        <label for="enerc_kcal">Energy (kcal):</label>
-        <input type="number" id="enerc_kcal" name="enerc_kcal" value="{{ food.Enerc_Kcal if food else '' }}" required>
+            <div class="mb-3">
+                <label for="weight" class="form-label">Weight</label>
+                <input type="number" class="form-control" id="weight" name="weight" value="{{ food.Weight if food else '' }}" required>
+            </div>
 
-        <label for="protein">Protein:</label>
-        <input type="number" id="protein" name="protein" value="{{ food.Protein if food else '' }}" required>
-
-        <label for="fat">Fat:</label>
-        <input type="number" id="fat" name="fat" value="{{ food.Fat if food else '' }}" required>
-
-        <label for="carbohydrate">Carbohydrate:</label>
-        <input type="number" id="carbohydrate" name="carbohydrate" value="{{ food.Carbohydrate if food else '' }}" required>
-
-        <label for="fiber">Fiber:</label>
-        <input type="number" id="fiber" name="fiber" value="{{ food.Fiber if food else '' }}" required>
-
-        <label for="category">Category:</label>
-        <input type="text" id="category" name="category" value="{{ food.Category if food else '' }}" required>
-
-        <label for="weight">Weight:</label>
-        <input type="number" id="weight" name="weight" value="{{ food.Weight if food else '' }}" required>
-
-        <input type="submit" value="{% if food %}Update{% else %}Add{% endif %} Food">
-
-        {% if confirmation_message %}
-            <p class="confirmation-message">{{ confirmation_message }}</p>
-        {% endif %}
-    </form>
-</body>
-</html>
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">{{ "Update" if food else "Add" }} Food</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

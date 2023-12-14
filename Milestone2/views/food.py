@@ -161,6 +161,22 @@ def edit():
 
     return render_template("manage_food.html", food=row)
 
+@food_blueprint.route('/view', methods=["GET"])
+def view_food():
+    row = []
+    food_id = request.args.get('id')
+    args = {"food_id": food_id}
+    try:
+        result = DB.selectOne("""
+            SELECT * FROM Food WHERE FoodID = %s
+        """, food_id)
+        if result.status:
+            row = result.row
+    except Exception as e:
+        flash("Error occurred: " + str(e), "error")
+
+    return render_template("view_food.html", food=row)
+
 @food_blueprint.route("/delete", methods=["GET"])
 def delete():
     id = request.args.get("id")
