@@ -1,4 +1,5 @@
 from enum import Enum
+from flask import redirect, session
 import requests
 import os
 import sys
@@ -155,7 +156,6 @@ class API:
     @staticmethod
     def _is_eligible_to_fetch(API_REF):
         return API._check_rate_limit(API_REF)
-
 
 if __name__ == "__main__":
     # example using https://rapidapi.com/alphavantage/api/alpha-vantage
