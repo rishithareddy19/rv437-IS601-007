@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+{% block title %}Food List{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Food List</h1>
+    <form method="get" action="{{ url_for('food.search') }}">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="labelFilter">Label:</label>
+                    <input type="text" name="label" id="labelFilter" class="form-control" placeholder="Enter label" value="{{ request.args.get('label') }}">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="categoryFilter">Category:</label>
+                    <input type="text" name="category" id="categoryFilter" class="form-control" placeholder="Enter category"value="{{ request.args.get('category') }}">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="energyFilter">Energy (kcal):</label>
+                    <input type="text" name="enerc_kcal" id="energyFilter" class="form-control" placeholder="Enter energy" value="{{ request.args.get('enerc_kcal') }}">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn btn-primary btn-block">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Label</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Energy (kcal)</th>
+                    <th scope="col">Protein</th>
+                    <th scope="col">Fat</th>
+                    <th scope="col">Carbohydrate</th>
+                    <th scope="col">Fiber</th>
+                    <th scope="col">Weight</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                    <tr>
+                        <td>{{ row.Label }}</td>
+                        <td>{{ row.Category }}</td>
+                        <td>{{ row.Enerc_Kcal }}</td>
+                        <td>{{ row.Protein }}</td>
+                        <td>{{ row.Fat }}</td>
+                        <td>{{ row.Carbohydrate }}</td>
+                        <td>{{ row.Fiber }}</td>
+                        <td>{{ row.Weight }}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{{ url_for('food.view_food', id=row.FoodID) }}" class="btn btn-info">View</a>
+                                <a href="{{ url_for('food.edit', id=row.FoodID) }}" class="btn btn-warning">Edit</a>
+                                <a href="{{ url_for('food.delete', id=row.FoodID) }}" class="btn btn-danger">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

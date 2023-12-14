@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+{% block title %}{{ "Edit" if food else "Add" }} Food{% endblock %}
+{% block content %}
+<div class="container-fluid mt-2">
+    <h1 class="text-center">{{ "Edit" if food else "Add" }} Food</h1>
+    <div class="container mt-2">
+        <form method="post" action="{% if food %}{{ url_for('food.edit', id=food.FoodID) }}{% else %}{{ url_for('food.add') }}{% endif %}">
+            <div class="mb-3">
+                <label for="label" class="form-label">Label</label>
+                <input type="text" class="form-control" id="label" name="label" value="{{ food.Label if food else '' }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="url" class="form-label">URL</label>
+                <input type="text" class="form-control" id="url" name="url" value="{{ food.Url if food else '' }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="enerc_kcal" class="form-label">Energy (kcal)</label>
+                <input type="number" class="form-control" id="enerc_kcal" name="enerc_kcal" value="{{ food.Enerc_Kcal if food else '' }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="protein" class="form-label">Protein</label>
+                <input type="number" class="form-control" id="protein" name="protein" value="{{ food.Protein if food else '' }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="fat" class="form-label">Fat</label>
+                <input type="number" class="form-control" id="fat" name="fat" value="{{ food.Fat if food else '' }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="carbohydrate" class="form-label">Carbohydrate</label>
+                <input type="number" class="form-control" id="carbohydrate" name="carbohydrate" value="{{ food.Carbohydrate if food else '' }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="fiber" class="form-label">Fiber</label>
+                <input type="number" class="form-control" id="fiber" name="fiber" value="{{ food.Fiber if food else '' }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="category" class="form-label">Category</label>
+                <input type="text" class="form-control" id="category" name="category" value="{{ food.Category if food else '' }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="weight" class="form-label">Weight</label>
+                <input type="number" class="form-control" id="weight" name="weight" value="{{ food.Weight if food else '' }}" required>
+            </div>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">{{ "Update" if food else "Add" }} Food</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
