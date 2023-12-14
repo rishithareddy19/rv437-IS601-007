@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .flashes {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Food List</h1>
+
+    <!-- Display Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Search Form -->
+    <form method="GET" action="{{ url_for('food.search') }}">
+        <label for="name">Name:</label>
+        <input type="text" name="name" value="{{ request.args.get('name', '') }}">
+        
+        <label for="category">Category:</label>
+        <input type="text" name="category" value="{{ request.args.get('category', '') }}">
+        
+        <label for="column">Sort By:</label>
+        <select name="column">
+            {% for column, display_name in allowed_columns %}
+                <option value="{{ column }}" {% if column == request.args.get('column') %}selected{% endif %}>{{ display_name }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="order">Order:</label>
+        <select name="order">
+            <option value="asc" {% if 'asc' == request.args.get('order') %}selected{% endif %}>Ascending</option>
+            <option value="desc" {% if 'desc' == request.args.get('order') %}selected{% endif %}>Descending</option>
+        </select>
+
+        <label for="limit">Limit:</label>
+        <input type="number" name="limit" min="1" max="100" value="{{ request.args.get('limit', '10') }}">
+        
+        <button type="submit">Search</button>
+    </form>
+
+    <!-- Food Table -->
+    <table>
+        <tr>
+            {% for column, display_name in allowed_columns %}
+                <th>
+                    <a href="{{ url_for('food.search', name=request.args.get('name', ''), category=request.args.get('category', ''), column=column, order='asc' if column != request.args.get('column') or request.args.get('order') == 'desc' else 'desc', limit=request.args.get('limit', '10')) }}">
+                        {{ display_name }}
+                    </a>
+                </th>
+            {% endfor %}
+            <th>Action</th>
+        </tr>
+
+        {% for row in rows %}
+            <tr>
+                <td>{{ row.Label }}</td>
+                <td>{{ row.Category }}</td>
+                <!-- Add other columns as needed -->
+                <td>
+                    <a href="{{ url_for('food.edit', id=row.FoodID) }}">Edit</a> |
+                    <a href="{{ url_for('food.delete', id=row.FoodID) }}">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>

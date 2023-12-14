@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food List</title>
+</head>
+<body>
+    <h1>Food List</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Label</th>
+                <th>Category</th>
+                <th>Energy (kcal)</th>
+                <th>Protein</th>
+                <th>Fat</th>
+                <th>Carbohydrate</th>
+                <th>Fiber</th>
+                <th>Weight</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+                <tr>
+                    <td>{{ row.Label }}</td>
+                    <td>{{ row.Category }}</td>
+                    <td>{{ row.Enerc_Kcal }}</td>
+                    <td>{{ row.Protein }}</td>
+                    <td>{{ row.Fat }}</td>
+                    <td>{{ row.Carbohydrate }}</td>
+                    <td>{{ row.Fiber }}</td>
+                    <td>{{ row.Weight }}</td>
+                    <td>
+                        <a href="{{ url_for('food.edit', id=row.FoodID) }}">Edit</a>
+                        <a href="{{ url_for('food.delete', id=row.FoodID) }}">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('food.add') }}">Add Food</a>
+</body>
+</html>
