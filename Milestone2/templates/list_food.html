@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food List</title>
+    <form method="GET" action="{{ url_for('food.search') }}">
+        <label for="filter_label">Filter by Label:</label>
+        <input type="text" name="label" id="filter_label">
+        
+        <label for="filter_category">Filter by Category:</label>
+        <input type="text" name="category" id="filter_category">
+        
+        <label for="filter_energy">Filter by Energy (kcal):</label>
+        <input type="text" name="energy" id="filter_energy">
+
+        <button type="submit">Apply Filters</button>
+    </form>
+</head>
+<body>
+    <h1>Food List</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Label</th>
+                <th>Category</th>
+                <th>Energy (kcal)</th>
+                <th>Protein</th>
+                <th>Fat</th>
+                <th>Carbohydrate</th>
+                <th>Fiber</th>
+                <th>Weight</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+                <tr>
+                    <td>{{ row.Label }}</td>
+                    <td>{{ row.Category }}</td>
+                    <td>{{ row.Enerc_Kcal }}</td>
+                    <td>{{ row.Protein }}</td>
+                    <td>{{ row.Fat }}</td>
+                    <td>{{ row.Carbohydrate }}</td>
+                    <td>{{ row.Fiber }}</td>
+                    <td>{{ row.Weight }}</td>
+                    <td>
+                        <a href="{{ url_for('food.edit', id=row.FoodID) }}">Edit</a>
+                        <a href="{{ url_for('food.delete', id=row.FoodID) }}">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('food.add') }}">Add Food</a>
+</body>
+</html>
