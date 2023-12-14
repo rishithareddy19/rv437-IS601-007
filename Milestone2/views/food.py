@@ -4,6 +4,7 @@ from datetime import datetime
 
 food_blueprint = Blueprint('food', __name__, url_prefix='/food')
 
+
 @food_blueprint.route("/search", methods=["GET"])
 def search():
     rows = []
@@ -11,22 +12,28 @@ def search():
     query = "SELECT * FROM Food WHERE 1=1"
     args = {}
 
-    # TODO search-2 get name, country, state, column, order, limit request args
-    name = request.args.get("name")
+    # TODO search-2 get name, category, enerc_kcal, column, order, limit request args
+    name = request.args.get("label")
     category = request.args.get("category")
+    enerc_kcal = request.args.get("enerc_kcal")
     column = request.args.get("column")
     order = request.args.get("order")
     limit = request.args.get("limit", 10)
 
     # TODO search-3 append a LIKE filter for name if provided
     if name:
-        query += " AND Label LIKE %(name)s"
-        args["name"] = f"%{name}%"
+        query += " AND Label LIKE %(label)s"
+        args["label"] = f"%{name}%"
 
     # TODO search-4 append an equality filter for category if provided
     if category:
         query += " AND Category = %(category)s"
         args["category"] = category
+
+    # TODO search-5 append a filter for enerc_kcal if provided
+    if enerc_kcal:
+        query += " AND Enerc_Kcal = %(enerc_kcal)s"
+        args["enerc_kcal"] = enerc_kcal
 
     # TODO search-6 append sorting if column and order are provided and within the allows columns and allowed order asc,desc
     if column in allowed_columns and order in ["asc", "desc"]:
@@ -55,8 +62,10 @@ def search():
 
     return render_template("food_list.html", rows=rows, allowed_columns=allowed_columns)
 
+
 @food_blueprint.route("/add", methods=["GET", "POST"])
 def add():
+    #rv437 and 12/14/23
     if request.method == "POST":
         has_error = False
         label = request.form.get("label")
@@ -72,6 +81,7 @@ def add():
         if not label:
             flash("Label is required.", "danger")
             has_error = True
+            #rv437 and 12/14/23
 
         if not has_error:
             try:
@@ -98,10 +108,12 @@ def add():
                 flash(str(e), "danger")
 
     return render_template("manage_food.html", food=request.form)
+#rv437 and 12/14/23
 
 @food_blueprint.route("/edit", methods=["GET", "POST"])
 def edit():
     id = request.args.get("id")
+    #rv437 and 12/14/23
 
     if not id:
         flash("Food ID is required.", "danger")
@@ -109,6 +121,7 @@ def edit():
 
     if request.method == "POST":
         has_error = False
+        #rv437 and 12/14/23
 
         label = request.form.get("label")
         url = request.form.get("url")
@@ -163,6 +176,7 @@ def edit():
 
 @food_blueprint.route('/view', methods=["GET"])
 def view_food():
+    #rv437 and 12/14/23
     row = []
     food_id = request.args.get('id')
     args = {"food_id": food_id}
@@ -179,6 +193,7 @@ def view_food():
 
 @food_blueprint.route("/delete", methods=["GET"])
 def delete():
+    #rv437 and 12/14/23
     id = request.args.get("id")
 
     if not id:

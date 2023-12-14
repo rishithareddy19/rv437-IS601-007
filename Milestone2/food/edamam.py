@@ -8,10 +8,12 @@ edamam = Blueprint('edamam', __name__, url_prefix='/edamam')
 
 @edamam.route("/update", methods=["GET"])
 def update():
+    #rv437 and 12/14/23
     result = update_edamam()
     return result
 
 def update_edamam():
+    #rv437 and 12/14/23
     url = "/api/food-database/v2/parser"
     querystring = {"nutrition-type": "cooking", "category[0]": "generic-foods", "health[0]": "alcohol-free"}
     response = API.get(url, querystring)
@@ -19,6 +21,7 @@ def update_edamam():
     print("Response Type:", type(response))
 
     if response:
+        #rv437 and 12/14/23
         try:
             if isinstance(response, str):
                 response = json.loads(response)
@@ -49,6 +52,7 @@ def update_edamam():
                     food_data = []
 
                     for food_item in data:
+                        #rv437 and 12/14/23
                         food_values = (
                             
                             food_item.get('Url'),
@@ -78,6 +82,7 @@ def update_edamam():
                 return jsonify(error="Unexpected response format. 'data' key not found."), 500
 
         except Exception as e:
+            #rv437 and 12/14/23
             print(str(e))
             flash(f"An error occurred: {str(e)}", "danger")
             return jsonify(error=str(e)), 500

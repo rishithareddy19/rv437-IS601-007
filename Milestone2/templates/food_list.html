@@ -3,6 +3,34 @@
 {% block content %}
 <div class="container mt-4">
     <h1 class="text-center mb-4">Food List</h1>
+    <form method="get" action="{{ url_for('food.search') }}">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="labelFilter">Label:</label>
+                    <input type="text" name="label" id="labelFilter" class="form-control" placeholder="Enter label" value="{{ request.args.get('label') }}">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="categoryFilter">Category:</label>
+                    <input type="text" name="category" id="categoryFilter" class="form-control" placeholder="Enter category"value="{{ request.args.get('category') }}">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="energyFilter">Energy (kcal):</label>
+                    <input type="text" name="enerc_kcal" id="energyFilter" class="form-control" placeholder="Enter energy" value="{{ request.args.get('enerc_kcal') }}">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn btn-primary btn-block">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+    </form>
     <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead class="thead-dark">
