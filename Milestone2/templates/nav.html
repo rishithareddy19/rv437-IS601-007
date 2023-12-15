@@ -1,6 +1,10 @@
+{% from "_dropdown_nav.html" import dropdown_nav %}
+
 <nav class="navbar navbar-expand-lg bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{{ url_for('home.index') }}">TD-rv437</a>
+        <a class="navbar-brand" href="{{ url_for('home.index') }}">
+            <img src="https://rapidapi-prod-apis.s3.amazonaws.com/d7/523608718e442abc945fa15f1d53a2/c46b869cfc74246426116282a2d67fd8.png" alt="EDAMAM Logo" height="30">
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -10,21 +14,49 @@
         
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{url_for('food.search')}}">Search Food</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{url_for('food.add')}}">Add Food</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{url_for('food.edit')}}">Edit Food</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{url_for('food.delete')}}">Delete Food</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{url_for('food.delete')}}">Logout</a>
-                </li>
+                {% if not current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('auth.login')}}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('auth.register')}}">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('home.index')}}">Home</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('food.search')}}">Search Food</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('food.add')}}">Add Food</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('food.edit')}}">Edit Food</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('food.delete')}}">Delete Food</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('auth.logout')}}">Logout</a>
+                    </li>
+                    
+                    <!-- Other navigation items for authenticated users -->
+                    {% set samples = [
+                        ("food.add", "Add Sample"),
+                        ("food.search", "List Samples"),
+                    ] %}
+                    {{dropdown_nav("Samples", samples)}}
+
+                    {% if current_user.has_role("Admin") %}
+                        {% set roles = [
+                            ("roles.add", "Add Role"),
+                            ("roles.list", "List Roles"),
+                            ("roles.assign", "Assign Role")
+                        ] %}
+                        {{dropdown_nav("Roles", roles)}}
+                    {% endif %}
+                {% endif %}
             </ul>
         </div>
     </div>
